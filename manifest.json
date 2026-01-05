@@ -1,0 +1,16 @@
+{
+  "name": "Zeroheight Instance Creator",
+  "id": "zeroheight-instance-creator",
+  "api": "1.0.0",
+  "id": "1589948228940903406",
+  "documentAccess": "dynamic-page",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": [
+    "figma"
+  ],
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}
+

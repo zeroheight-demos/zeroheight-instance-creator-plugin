@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      padding: 16px;
+      margin: 0;
+      background: #ffffff;
+    }
+    
+    .section {
+      margin-bottom: 20px;
+    }
+    
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+      margin-right: 8px;
+      cursor: pointer;
+    }
+    
+    .checkbox-group label {
+      font-size: 12px;
+      color: #333;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    select {
+      width: 100%;
+      padding: 6px 8px;
+      font-size: 12px;
+      border: 1px solid #e5e5e5;
+      border-radius: 3px;
+      background: white;
+      color: #333;
+      margin-top: 8px;
+    }
+    
+    select:disabled {
+      background: #f5f5f5;
+      color: #999;
+      cursor: not-allowed;
+    }
+    
+    .radio-group {
+      margin-top: 8px;
+    }
+    
+    .radio-option {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    
+    .radio-option input[type="radio"] {
+      margin-right: 8px;
+      cursor: pointer;
+    }
+    
+    .radio-option label {
+      font-size: 12px;
+      color: #333;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #18a0fb;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+    
+    button:hover {
+      background: #1592e6;
+    }
+    
+    button:active {
+      background: #0d7ccc;
+    }
+    
+    button:disabled {
+      background: #e5e5e5;
+      color: #999;
+      cursor: not-allowed;
+    }
+    
+    .divider {
+      height: 1px;
+      background: #e5e5e5;
+      margin: 16px 0;
+    }
+    
+    .settings-view {
+      display: none;
+    }
+    
+    .settings-view.active {
+      display: block;
+    }
+    
+    .simple-view {
+      display: block;
+    }
+    
+    .simple-view.hidden {
+      display: none;
+    }
+    
+    .button-secondary {
+      background: #f0f0f0;
+      color: #333;
+      margin-top: 8px;
+    }
+    
+    .button-secondary:hover {
+      background: #e0e0e0;
+    }
+    
+    .button-secondary:active {
+      background: #d0d0d0;
+    }
+    
+    .status-text {
+      font-size: 11px;
+      color: #666;
+      margin-top: 8px;
+      text-align: center;
+    }
+    
+    .property-group {
+      margin-bottom: 12px;
+    }
+    
+    .property-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    
+    .property-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .property-header input[type="checkbox"] {
+      margin-right: 0;
+      cursor: pointer;
+    }
+    
+    .property-values {
+      margin-left: 24px;
+      margin-top: 4px;
+    }
+    
+    .property-values .checkbox-group {
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Simple View (default) -->
+  <div class="simple-view" id="simpleView">
+    <div class="section">
+      <div class="section-title">Selected Component</div>
+      <div id="componentName" style="font-size: 13px; color: #333; padding: 8px; background: #f5f5f5; border-radius: 3px; margin-bottom: 12px;">
+        No component selected
+      </div>
+    </div>
+    
+    <!-- Variant Properties Selection -->
+    <div class="section" id="variantSection" style="display: none;">
+      <div class="section-title">Variant Properties</div>
+      <div id="variantProperties"></div>
+    </div>
+    
+    <!-- Boolean Properties Selection -->
+    <div class="section" id="booleanSection" style="display: none;">
+      <div class="section-title">Boolean Properties</div>
+      <div id="booleanProperties"></div>
+    </div>
+    
+    <button id="createInstances">Create Instances</button>
+    <button class="button-secondary" id="openSettings">Settings</button>
+    <div class="status-text" id="statusText"></div>
+  </div>
+  
+  <!-- Settings View -->
+  <div class="settings-view" id="settingsView">
+  <div class="section">
+    <div class="section-title">Options</div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="includeVariants" checked>
+      <label for="includeVariants">Include Variants</label>
+    </div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="includeBooleans" checked>
+      <label for="includeBooleans">Include Booleans</label>
+    </div>
+  </div>
+  
+  <div class="divider"></div>
+  
+  <div class="section">
+    <div class="section-title">Instance Naming</div>
+    <div class="radio-group">
+      <div class="radio-option">
+        <input type="radio" id="namingSimple" name="naming" value="simple" checked>
+        <label for="namingSimple">Simple: [component name]</label>
+      </div>
+      <div class="radio-option">
+        <input type="radio" id="namingComplex" name="naming" value="complex">
+        <label for="namingComplex">Complex: [component name] - [variant name/s] - [boolean name/s] [on or off]</label>
+      </div>
+    </div>
+  </div>
+  
+  <button id="saveSettings">Save Settings</button>
+  <button class="button-secondary" id="cancelSettings">Cancel</button>
+  </div>
+  
+  <script>
+    const includeVariantsCheckbox = document.getElementById('includeVariants');
+    const includeBooleansCheckbox = document.getElementById('includeBooleans');
+    const namingRadios = document.querySelectorAll('input[name="naming"]');
+    const generateButton = document.getElementById('saveSettings');
+    const createInstancesButton = document.getElementById('createInstances');
+    const openSettingsButton = document.getElementById('openSettings');
+    const cancelSettingsButton = document.getElementById('cancelSettings');
+    const simpleView = document.getElementById('simpleView');
+    const settingsView = document.getElementById('settingsView');
+    const statusText = document.getElementById('statusText');
+    const componentNameDiv = document.getElementById('componentName');
+    const variantSection = document.getElementById('variantSection');
+    const booleanSection = document.getElementById('booleanSection');
+    const variantPropertiesDiv = document.getElementById('variantProperties');
+    const booleanPropertiesDiv = document.getElementById('booleanProperties');
+    
+    let savedSettings = null;
+    let currentComponentProperties = null;
+    let currentComponentId = null; // Track component ID to avoid unnecessary re-renders
+    
+    // Function to update component name display
+    function updateComponentName() {
+      parent.postMessage({ pluginMessage: { type: 'get-selected-component' } }, '*');
+    }
+    
+    // Update component name on selection change
+    setInterval(updateComponentName, 500); // Check every 500ms
+    updateComponentName(); // Initial check
+    
+    // Function to render variant properties checkboxes
+    function renderVariantProperties(variantProperties) {
+      if (!variantProperties || Object.keys(variantProperties).length === 0) {
+        variantSection.style.display = 'none';
+        return;
+      }
+      
+      // Only show if includeVariants is enabled in settings
+      if (!savedSettings || !savedSettings.includeVariants) {
+        variantSection.style.display = 'none';
+        return;
+      }
+      
+      variantSection.style.display = 'block';
+      variantPropertiesDiv.innerHTML = '';
+      
+      for (const propName in variantProperties) {
+        if (variantProperties.hasOwnProperty(propName)) {
+          const propGroup = document.createElement('div');
+          propGroup.className = 'property-group';
+          
+          // Create header with master checkbox
+          const propHeader = document.createElement('div');
+          propHeader.className = 'property-header';
+          
+          const masterCheckbox = document.createElement('input');
+          masterCheckbox.type = 'checkbox';
+          masterCheckbox.id = `variant-master-${propName}`;
+          masterCheckbox.dataset.propertyName = propName;
+          masterCheckbox.checked = true; // Default to all selected
+          
+          const propNameLabel = document.createElement('label');
+          propNameLabel.htmlFor = masterCheckbox.id;
+          propNameLabel.className = 'property-name';
+          propNameLabel.textContent = propName;
+          
+          // Master checkbox handler - select/deselect all values
+          masterCheckbox.addEventListener('change', function() {
+            const valueCheckboxes = propValuesDiv.querySelectorAll(`input[type="checkbox"][data-property-name="${propName}"]`);
+            for (let i = 0; i < valueCheckboxes.length; i++) {
+              valueCheckboxes[i].checked = masterCheckbox.checked;
+            }
+          });
+          
+          propHeader.appendChild(masterCheckbox);
+          propHeader.appendChild(propNameLabel);
+          propGroup.appendChild(propHeader);
+          
+          const propValuesDiv = document.createElement('div');
+          propValuesDiv.className = 'property-values';
+          
+          const values = variantProperties[propName];
+          for (let i = 0; i < values.length; i++) {
+            const value = values[i];
+            const checkboxGroup = document.createElement('div');
+            checkboxGroup.className = 'checkbox-group';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `variant-${propName}-${value}`;
+            checkbox.value = value;
+            checkbox.dataset.propertyName = propName;
+            checkbox.checked = true; // Default to all selected
+            
+            // Update master checkbox when individual checkboxes change
+            checkbox.addEventListener('change', function() {
+              const allChecked = Array.from(propValuesDiv.querySelectorAll(`input[type="checkbox"][data-property-name="${propName}"]`))
+                .every(cb => cb.checked);
+              masterCheckbox.checked = allChecked;
+            });
+            
+            const label = document.createElement('label');
+            label.htmlFor = checkbox.id;
+            label.textContent = value;
+            
+            checkboxGroup.appendChild(checkbox);
+            checkboxGroup.appendChild(label);
+            propValuesDiv.appendChild(checkboxGroup);
+          }
+          
+          propGroup.appendChild(propValuesDiv);
+          variantPropertiesDiv.appendChild(propGroup);
+        }
+      }
+    }
+    
+    // Function to render boolean properties checkboxes
+    function renderBooleanProperties(booleanProperties) {
+      if (!booleanProperties || booleanProperties.length === 0) {
+        booleanSection.style.display = 'none';
+        return;
+      }
+      
+      // Only show if includeBooleans is enabled in settings
+      if (!savedSettings || !savedSettings.includeBooleans) {
+        booleanSection.style.display = 'none';
+        return;
+      }
+      
+      booleanSection.style.display = 'block';
+      booleanPropertiesDiv.innerHTML = '';
+      
+      // Create master checkbox for all booleans
+      const masterGroup = document.createElement('div');
+      masterGroup.className = 'property-group';
+      
+      const masterHeader = document.createElement('div');
+      masterHeader.className = 'property-header';
+      
+      const masterCheckbox = document.createElement('input');
+      masterCheckbox.type = 'checkbox';
+      masterCheckbox.id = 'boolean-master-all';
+      masterCheckbox.checked = true; // Default to all selected
+      
+      const masterLabel = document.createElement('label');
+      masterLabel.htmlFor = masterCheckbox.id;
+      masterLabel.className = 'property-name';
+      masterLabel.textContent = 'All Boolean Properties';
+      
+      masterHeader.appendChild(masterCheckbox);
+      masterHeader.appendChild(masterLabel);
+      masterGroup.appendChild(masterHeader);
+      
+      const booleanValuesDiv = document.createElement('div');
+      booleanValuesDiv.className = 'property-values';
+      
+      // Master checkbox handler - select/deselect all booleans
+      masterCheckbox.addEventListener('change', function() {
+        const valueCheckboxes = booleanValuesDiv.querySelectorAll('input[type="checkbox"]');
+        for (let i = 0; i < valueCheckboxes.length; i++) {
+          valueCheckboxes[i].checked = masterCheckbox.checked;
+        }
+      });
+      
+      for (let i = 0; i < booleanProperties.length; i++) {
+        const propName = booleanProperties[i];
+        const checkboxGroup = document.createElement('div');
+        checkboxGroup.className = 'checkbox-group';
+        
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `boolean-${propName}`;
+        checkbox.value = propName;
+        checkbox.checked = true; // Default to all selected
+        
+        // Update master checkbox when individual checkboxes change
+        checkbox.addEventListener('change', function() {
+          const allChecked = Array.from(booleanValuesDiv.querySelectorAll('input[type="checkbox"]'))
+            .every(cb => cb.checked);
+          masterCheckbox.checked = allChecked;
+        });
+        
+        const label = document.createElement('label');
+        label.htmlFor = checkbox.id;
+        label.textContent = propName;
+        
+        checkboxGroup.appendChild(checkbox);
+        checkboxGroup.appendChild(label);
+        booleanValuesDiv.appendChild(checkboxGroup);
+      }
+      
+      masterGroup.appendChild(booleanValuesDiv);
+      booleanPropertiesDiv.appendChild(masterGroup);
+    }
+    
+    // Function to get selected variants and booleans
+    function getSelectedProperties() {
+      const selectedVariants = {};
+      const selectedBooleans = [];
+      
+      // Get selected variant values (skip master checkboxes)
+      const variantCheckboxes = variantPropertiesDiv.querySelectorAll('input[type="checkbox"][data-property-name]');
+      for (let i = 0; i < variantCheckboxes.length; i++) {
+        const checkbox = variantCheckboxes[i];
+        // Skip master checkboxes (they don't have a value attribute)
+        if (checkbox.value && checkbox.checked) {
+          const propName = checkbox.dataset.propertyName;
+          if (!selectedVariants[propName]) {
+            selectedVariants[propName] = [];
+          }
+          selectedVariants[propName].push(checkbox.value);
+        }
+      }
+      
+      // If no variants selected for a property, use the first value as default
+      if (currentComponentProperties && currentComponentProperties.variantProperties) {
+        for (const propName in currentComponentProperties.variantProperties) {
+          if (currentComponentProperties.variantProperties.hasOwnProperty(propName)) {
+            if (!selectedVariants[propName] || selectedVariants[propName].length === 0) {
+              const values = currentComponentProperties.variantProperties[propName];
+              if (values && values.length > 0) {
+                selectedVariants[propName] = [values[0]]; // Use first value as default
+              }
+            }
+          }
+        }
+      }
+      
+      // Get selected boolean properties (skip master checkbox)
+      const booleanCheckboxes = booleanPropertiesDiv.querySelectorAll('input[type="checkbox"]');
+      for (let i = 0; i < booleanCheckboxes.length; i++) {
+        const checkbox = booleanCheckboxes[i];
+        // Skip master checkbox
+        if (checkbox.id !== 'boolean-master-all' && checkbox.checked) {
+          selectedBooleans.push(checkbox.value);
+        }
+      }
+      
+      // If no booleans selected, use the first one as default
+      if (selectedBooleans.length === 0 && currentComponentProperties && currentComponentProperties.booleanProperties) {
+        const booleanProps = currentComponentProperties.booleanProperties;
+        if (booleanProps && booleanProps.length > 0) {
+          selectedBooleans.push(booleanProps[0]); // Use first boolean as default
+        }
+      }
+      
+      return {
+        selectedVariants: Object.keys(selectedVariants).length > 0 ? selectedVariants : undefined,
+        selectedBooleans: selectedBooleans.length > 0 ? selectedBooleans : undefined
+      };
+    }
+    
+    // Listen for component name from plugin
+    window.addEventListener('message', (event) => {
+      if (event.data.pluginMessage.type === 'selected-component') {
+        const componentInfo = event.data.pluginMessage.component;
+        if (componentInfo) {
+          // Create a unique ID for this component based on name and properties
+          const componentId = componentInfo.name + JSON.stringify(componentInfo.variantProperties) + JSON.stringify(componentInfo.booleanProperties);
+          
+          // Only re-render if component actually changed
+          if (componentId !== currentComponentId) {
+            componentNameDiv.textContent = componentInfo.name;
+            componentNameDiv.style.color = '#333';
+            currentComponentProperties = componentInfo;
+            currentComponentId = componentId;
+            
+            // Render property checkboxes (will check settings internally)
+            if (componentInfo.variantProperties) {
+              renderVariantProperties(componentInfo.variantProperties);
+            } else {
+              variantSection.style.display = 'none';
+            }
+            
+            if (componentInfo.booleanProperties) {
+              renderBooleanProperties(componentInfo.booleanProperties);
+            } else {
+              booleanSection.style.display = 'none';
+            }
+          } else {
+            // Component hasn't changed, just update the name display
+            componentNameDiv.textContent = componentInfo.name;
+            componentNameDiv.style.color = '#333';
+          }
+        } else {
+          componentNameDiv.textContent = 'No component selected';
+          componentNameDiv.style.color = '#999';
+          variantSection.style.display = 'none';
+          booleanSection.style.display = 'none';
+          currentComponentProperties = null;
+          currentComponentId = null;
+        }
+      }
+    });
+    
+    // Load settings on startup
+    parent.postMessage({ pluginMessage: { type: 'load-settings' } }, '*');
+    
+    // Listen for settings loaded
+    window.addEventListener('message', (event) => {
+      if (event.data.pluginMessage.type === 'settings-loaded') {
+        savedSettings = event.data.pluginMessage.settings;
+        if (savedSettings) {
+          // Apply saved settings to form
+          includeVariantsCheckbox.checked = savedSettings.includeVariants !== false;
+          includeBooleansCheckbox.checked = savedSettings.includeBooleans !== false;
+          if (savedSettings.naming) {
+            document.querySelector(`input[name="naming"][value="${savedSettings.naming}"]`).checked = true;
+          }
+          
+          // Show simple view
+          showSimpleView();
+          updateStatusText();
+          
+          // Re-render property checkboxes if component is selected
+          if (currentComponentProperties) {
+            if (currentComponentProperties.variantProperties) {
+              renderVariantProperties(currentComponentProperties.variantProperties);
+            }
+            if (currentComponentProperties.booleanProperties) {
+              renderBooleanProperties(currentComponentProperties.booleanProperties);
+            }
+          }
+        } else {
+          // Show settings view if no settings saved
+          showSettingsView();
+        }
+      }
+    });
+    
+    function showSimpleView() {
+      simpleView.classList.remove('hidden');
+      settingsView.classList.remove('active');
+    }
+    
+    function showSettingsView() {
+      simpleView.classList.add('hidden');
+      settingsView.classList.add('active');
+    }
+    
+    function updateStatusText() {
+      if (!savedSettings) {
+        statusText.textContent = '';
+        return;
+      }
+      
+      const parts = [];
+      if (savedSettings.includeVariants) parts.push('Variants');
+      if (savedSettings.includeBooleans) parts.push('Booleans');
+      const naming = savedSettings.naming === 'complex' ? 'Complex' : 'Simple';
+      
+      statusText.textContent = `${parts.join(', ')} • ${naming} naming`;
+    }
+    
+    // Open settings
+    openSettingsButton.addEventListener('click', () => {
+      showSettingsView();
+    });
+    
+    // Cancel settings
+    cancelSettingsButton.addEventListener('click', () => {
+      if (savedSettings) {
+        // Restore saved settings
+        includeVariantsCheckbox.checked = savedSettings.includeVariants !== false;
+        includeBooleansCheckbox.checked = savedSettings.includeBooleans !== false;
+        if (savedSettings.naming) {
+          document.querySelector(`input[name="naming"][value="${savedSettings.naming}"]`).checked = true;
+        }
+      }
+      showSimpleView();
+    });
+    
+    // Create instances with saved settings
+    createInstancesButton.addEventListener('click', () => {
+      if (!savedSettings) {
+        showSettingsView();
+        return;
+      }
+      
+      // Merge saved settings with selected properties
+      const selectedProps = getSelectedProperties();
+      const options = {
+        includeVariants: savedSettings.includeVariants,
+        includeBooleans: savedSettings.includeBooleans,
+        naming: savedSettings.naming,
+        selectedVariants: selectedProps.selectedVariants,
+        selectedBooleans: selectedProps.selectedBooleans
+      };
+      
+      parent.postMessage({
+        pluginMessage: {
+          type: 'generate-instances',
+          options: options
+        }
+      }, '*');
+    });
+    
+    // Save settings button click
+    generateButton.addEventListener('click', () => {
+      const includeVariants = includeVariantsCheckbox.checked;
+      const includeBooleans = includeBooleansCheckbox.checked;
+      const naming = document.querySelector('input[name="naming"]:checked').value;
+      
+      const settings = {
+        includeVariants,
+        includeBooleans,
+        naming
+      };
+      
+      // Save settings
+      parent.postMessage({
+        pluginMessage: {
+          type: 'save-settings',
+          settings
+        }
+      }, '*');
+      
+      savedSettings = settings;
+      showSimpleView();
+      updateStatusText();
+    });
+  </script>
+</body>
+</html>
+

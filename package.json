@@ -1,0 +1,14 @@
+{
+  "name": "zeroheight-instance-creator",
+  "version": "1.0.0",
+  "description": "Figma plugin to create instance tables for Zeroheight",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.90.0",
+    "typescript": "^5.0.0"
+  }
+}
+
