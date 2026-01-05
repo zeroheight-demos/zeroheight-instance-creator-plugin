@@ -1,6 +1,6 @@
-# Zeroheight Instance Creator
+# zeroheight Instance Creator
 
-A Figma plugin that helps you create instance tables for all prop variations of a component, perfect for documenting components in Zeroheight.
+A Figma plugin that helps you create instance tables for all prop variations of a component, perfect for documenting components in zeroheight.
 
 ## Features
 
